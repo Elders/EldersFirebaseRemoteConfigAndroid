@@ -1,2 +1,2 @@
 include ':EldersFirebaseRemoteConfig'
-rootProject.name = "EldersFirebaseRemoteConfig"
+rootProject.name = "EldersFirebaseRemoteConfigAndroid"
