@@ -1,3 +1,2 @@
 include ':EldersFirebaseRemoteConfig'
-include ':EldersFirebaseRemoteConfig'
 rootProject.name = "EldersFirebaseRemoteConfig"
