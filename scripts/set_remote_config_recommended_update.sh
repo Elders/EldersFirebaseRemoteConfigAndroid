@@ -1,24 +1,18 @@
 #!/bin/bash
 
-# In script configured veriable 
-recommended_update_verison="1.2.3.123" 
-recommended_update_download="https://download.apk/artifact/xyz"
-service_account_json="service_account.json" 
+#the script can be executed with variables, for example:
+# ./set_remote_config_recommended_update.sh (android|ios) (version) (download location) (service account jason location)
+platform=$1
+recommended_update_verison=$2
+recommended_update_download=$3
+service_account_json=$4
 
 service_endpoint="https://firebaseremoteconfig.googleapis.com"
 
-# also the script can be executed with variables, for example:
-# ./set_remote_config_recommended_update.sh (version) (download location) (service account jason location)
-if [ -n "$1" ]; then
-    recommended_update_verison=$1
-fi
-
-if [ -n "$2" ]; then
-    recommended_update_download=$2
-fi
-
-if [ -n "$3" ]; then
-    service_account_json=$3
+# check that all variables are present
+if [ -z "$platform" ] || [ -z "$recommended_update_verison" ] || [ -z "$recommended_update_download" ] || [ -z "$service_account_json" ]; then
+    echo "Usage: ./set_remote_config_recommended_update.sh (android|ios) (version) (download location) (service account jason location)"
+    exit 1
 fi
 
 service_account_json=$(cat $service_account_json)
@@ -89,8 +83,16 @@ if [ -z "$remote_config" ]; then
     exit 1
 fi
 
-# moddify android_recommended_update value with parameters from input
-remote_config=$(echo $remote_config | jq '.parameters.android_recommended_update.defaultValue.value = "{\"version\": \"'"$recommended_update_verison"'\", \"download\": \"'"$recommended_update_download"'\"}"')
+# check platform and moddify json with parameters from input
+if [ "$platform" = "android" ]; then
+    remote_config=$(echo $remote_config | jq '.parameters.android_recommended_update.defaultValue.value = "{\"version\": \"'"$recommended_update_verison"'\", \"download\": \"'"$recommended_update_download"'\"}"')
+elif [ "$platform" = "ios" ]; then
+    remote_config=$(echo $remote_config | jq '.parameters.ios_recommended_update.defaultValue.value = "{\"version\": \"'"$recommended_update_verison"'\", \"download\": \"'"$recommended_update_download"'\"}"')
+else
+    echo "ERROR: Platform parameter can be android or ios"
+    exit 1
+fi
+
 
 # put the updated remote configuration to firebase with If-Match: *, !!!!! this is force update !!!!!
 # current default version of curl is not aware of ETag.
