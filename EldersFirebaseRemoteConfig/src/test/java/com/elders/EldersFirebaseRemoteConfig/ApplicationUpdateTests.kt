@@ -98,4 +98,19 @@ class ApplicationUpdateTests {
         Assert.assertEquals(update.version.build, 4)
         Assert.assertEquals(update.download, "https://apps.apple.com/us/app/pr%C3%BCvit-every-day/id1544930289")
     }
+
+    @Test
+    fun testVersionComaprisonCornerCases() {
+
+        Assert.assertFalse(ApplicationUpdate.Version("1.3.0.0") < ApplicationUpdate.Version("1.2.2"))
+        Assert.assertFalse(ApplicationUpdate.Version("1.3.0.0") < ApplicationUpdate.Version("1.0.2"))
+        Assert.assertFalse(ApplicationUpdate.Version("1.3.0.0") < ApplicationUpdate.Version("1.2.0"))
+        Assert.assertFalse(ApplicationUpdate.Version("1.3.0.0") < ApplicationUpdate.Version("1.2.2.5"))
+        Assert.assertFalse(ApplicationUpdate.Version("2.0.0.0") < ApplicationUpdate.Version("1.2.2.5"))
+        Assert.assertFalse(ApplicationUpdate.Version("2.0.5.0") < ApplicationUpdate.Version("1.2.2.5"))
+        Assert.assertFalse(ApplicationUpdate.Version("2.0.5.7") < ApplicationUpdate.Version("1.2.2.5"))
+        Assert.assertFalse(ApplicationUpdate.Version("2.4.5.7") < ApplicationUpdate.Version("1.2.2.5"))
+
+        Assert.assertTrue(ApplicationUpdate.Version("1.1.0.0") < ApplicationUpdate.Version("1.2.0"))
+    }
 }
